@@ -1,16 +1,16 @@
 ### test: echo should work
-### shell:
-echo "Foo"
+#### when:
+	echo "Foo"
 
 
-### output:
-Foo
+#### then:
+	Foo
 
 ### test: echo -e should preserve special chars
-### shell:
-echo -e "Foo\n\tBar"
+#### when:
+	echo -e "Foo\n\tBar"
 
 
-### output:
-Foo
-	Bar
+#### then:
+	Foo
+		Bar

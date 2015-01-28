@@ -28,11 +28,11 @@ getBlock() {
 
 getShell() {
 	local BODY="$1"
-	getBlock "$BODY" "### shell:"
+	getBlock "$BODY" "#### when:"
 }
 getOutput() {
 	local BODY="$1"
-	getBlock "$BODY" "### output:"
+	getBlock "$BODY" "#### then:"
 }
 
 
@@ -73,7 +73,10 @@ runTests() {
 				runTest "$title" "$unit" || FAILURES=$((FAILURES + 1))
 				unit=""
 			else
-				unit="$unit$p"$'\n'
+				if [[ $p == "\t"* ]]; then
+					line=$(cut -c 2-)
+					unit="$unit$line"$'\n'
+				fi
 			fi
 		fi
 
