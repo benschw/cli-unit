@@ -9,13 +9,18 @@ getBlock() {
 	local capture="0"
 
 	#for p in $BODY; do
+	IFS=''
 	while read -r p; do
 
 		if [[ $capture == "1" ]]; then	
 			if [[ $p == "###"* ]]; then
 				capture="0"
 			else
-				echo "$p"
+				if [[ "$p" == $'\t'* ]]; then
+					trimmed=$(echo "$p" | cut -c 2-)
+					echo "$trimmed"
+				fi
+
 			fi
 		fi
 		if [[ $p == "$TYPE"* ]]; then
@@ -39,18 +44,15 @@ getOutput() {
 runTest() {
 	local TITLE="$1"
 	local BODY="$2"
-
 	COUNTER=$((COUNTER + 1))
 
 	local SHELL=$(getShell "$BODY")
 	local EXPECTED=$(getOutput "$BODY")
 	local FOUND=$(eval "$SHELL")
 
-
 	if ! diff <(echo "$EXPECTED") <(echo "$FOUND") > /dev/null; then
 		echo "--- FAIL: $TITLE"
 		diff <(echo "$EXPECTED") <(echo "$FOUND")
-		# echo -e "expected: \n\t$EXPECTED \nnot equal to found: \n\t$FOUND"
 		return 1
 	fi
 	PASSED=$((PASSED + 1))
@@ -73,10 +75,7 @@ runTests() {
 				runTest "$title" "$unit" || FAILURES=$((FAILURES + 1))
 				unit=""
 			else
-				if [[ $p == "\t"* ]]; then
-					line=$(cut -c 2-)
-					unit="$unit$line"$'\n'
-				fi
+				unit="$unit$p"$'\n'
 			fi
 		fi
 
