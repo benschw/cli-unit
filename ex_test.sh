@@ -2,15 +2,16 @@
 
 #test -json flag should make output be in json
 #shell
-cat ./ex.json | ./jsonfilter -json myArray
+echo "Foo"
+
 
 #output
-["foo","bar"]
-
+Foo
 
 #test should target array element
 #shell
-cat ./ex.json | ./jsonfilter myArray.0
+echo "Bar"
+
 
 #output
-foo
+Bar
