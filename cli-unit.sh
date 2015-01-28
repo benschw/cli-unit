@@ -27,24 +27,25 @@ getBlock() {
 }
 
 getShell() {
-	local BODY=$1
+	local BODY="$1"
 	getBlock "$BODY" "### shell:"
 }
 getOutput() {
-	local BODY=$1
+	local BODY="$1"
 	getBlock "$BODY" "### output:"
 }
 
 
 runTest() {
-	local TITLE=$1
-	local BODY=$2
+	local TITLE="$1"
+	local BODY="$2"
 
 	COUNTER=$((COUNTER + 1))
 
 	local SHELL=$(getShell "$BODY")
 	local EXPECTED=$(getOutput "$BODY")
-	local FOUND=$(eval $SHELL)
+	local FOUND=$(eval "$SHELL")
+
 
 	if ! diff <(echo "$EXPECTED") <(echo "$FOUND") > /dev/null; then
 		echo "--- FAIL: $TITLE"
@@ -63,20 +64,21 @@ runTests() {
 	local unit=""
 	local FAILURES=0
 	local capture="0"
-	while read p; do
 
+	IFS=''
+	while read -r p; do
 		if [[ $capture == "1" ]]; then
 			if [[ $p == "### test:"* ]]; then
 				capture="0"
 				runTest "$title" "$unit" || FAILURES=$((FAILURES + 1))
 				unit=""
 			else
-				unit="${unit}${p}"$'\n'
+				unit="$unit$p"$'\n'
 			fi
 		fi
 
 		if [[ $p == "### test:"* ]]; then
-			title=$(echo $p | cut -c 10-)
+			title=$(echo "$p" | cut -c 10-)
 			capture="1"
 		fi
 	done <$FILE

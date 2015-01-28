@@ -1,4 +1,4 @@
-### test: -json flag should make output be in json
+### test: echo should work
 ### shell:
 echo "Foo"
 
@@ -6,10 +6,11 @@ echo "Foo"
 ### output:
 Foo
 
-### test: should target array element
+### test: echo -e should preserve special chars
 ### shell:
-echo "Bar"
+echo -e "Foo\n\tBar"
 
 
-#output
-Bar
+### output:
+Foo
+	Bar

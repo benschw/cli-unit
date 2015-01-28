@@ -1,5 +1,3 @@
-#!/bin/bash
-
 ### test: -json flag should make output be in json
 ### shell:
 echo "Foo"
@@ -13,6 +11,6 @@ Foso2
 echo "Bar"
 
 
-#output
+### output:
 Bar2
 
