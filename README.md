@@ -8,7 +8,7 @@ unit test your command line interfaces
 
 - add `cli-unitw.sh` to your project
 - add `.fli-unit` to your `.gitignore` file
-- run your test files: `./cli-unitw.sh *_test.sh`
+- run your test files: `./cli-unitw.sh *_test.md`
  
 
 ## Test Files
