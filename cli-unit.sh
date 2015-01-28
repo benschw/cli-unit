@@ -5,32 +5,34 @@ PASSED=0
 
 getBlock() {
 	local BODY=$1
-	local TYPE=$2
+	local TYPE="$2"
 	local capture="0"
-	for p in $BODY; do
+
+	#for p in $BODY; do
+	while read -r p; do
 
 		if [[ $capture == "1" ]]; then	
-			if [[ $p == "#"* ]]; then
+			if [[ $p == "###"* ]]; then
 				capture="0"
 			else
 				echo "$p"
 			fi
 		fi
-
 		if [[ $p == "$TYPE"* ]]; then
 			capture="1"
 		fi
 
-	done
+	done <<< "$BODY"
+	#done
 }
 
 getShell() {
 	local BODY=$1
-	getBlock "$BODY" "#shell"
+	getBlock "$BODY" "### shell:"
 }
 getOutput() {
 	local BODY=$1
-	getBlock "$BODY" "#output"
+	getBlock "$BODY" "### output:"
 }
 
 
@@ -64,7 +66,7 @@ runTests() {
 	while read p; do
 
 		if [[ $capture == "1" ]]; then
-			if [[ $p == "#test"* ]]; then
+			if [[ $p == "### test:"* ]]; then
 				capture="0"
 				runTest "$title" "$unit" || FAILURES=$((FAILURES + 1))
 				unit=""
@@ -73,8 +75,8 @@ runTests() {
 			fi
 		fi
 
-		if [[ $p == "#test"* ]]; then
-			title=$(echo $p | cut -c 7-)
+		if [[ $p == "### test:"* ]]; then
+			title=$(echo $p | cut -c 10-)
 			capture="1"
 		fi
 	done <$FILE
@@ -94,36 +96,3 @@ if [[ $FAILURES > 0 ]]; then
 fi
 
 echo "OK ($PASSED/$COUNTER tests passed)"
-
-
-
-
-# getOutput() {
-# 	file=$1
-# 	start="0"
-# 	while read p; do
-# 		if [ "$start" == "1" ]; then
-# 			echo -e $p | cut -c 3-
-# 		fi
-# 		if [[ $p == "# "Output:* ]]; then
-# 			start="1"
-# 		fi
-
-# 	done <$file
-
-# }
-
-# for f in $(ls $1); do
-# 	EXPECTED=$(getOutput $f)
-# 	FOUND=$(/bin/bash $f)
-
-# 	if [ "$EXPECTED" != "$FOUND" ]; then
-# 		echo -e "expected: \n\t\t$EXPECTED \n\tnot equal to found:\n\t\t$FOUND"
-# 		echo FAIL
-# 		exit 1
-# 	fi
-# done
-
-# echo OK
-
-
