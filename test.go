@@ -10,7 +10,7 @@ type Test struct {
 	Script         string
 	FoundOutput    string
 	ExpectedOutput string
-	Result         bool
+	Strict         bool
 	Exit           bool
 }
 
@@ -20,5 +20,6 @@ func (t *Test) Diff() string {
 }
 
 func (t *Test) Pass() bool {
-	return t.ExpectedOutput == t.FoundOutput
+
+	return strings.TrimSpace(t.ExpectedOutput) == strings.TrimSpace(t.FoundOutput)
 }

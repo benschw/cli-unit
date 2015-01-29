@@ -20,25 +20,32 @@ const (
 )
 
 func ParseFiles(files []string, testConfigs chan Test, errors chan error) {
-	lines := make([]string, 0)
 
-	for _, filePath := range files {
-		ls, err := parseFile(filePath)
-		if err != nil {
-			errors <- err
-			return
-		}
-		lines = append(lines, ls...)
+	lines, err := getFileContentsAsLines(files)
+	if err != nil {
+		errors <- err
 	}
 
-	err := parseLines(lines, testConfigs)
-	if err != nil {
+	if err = generateTestsFromLines(lines, testConfigs); err != nil {
 		errors <- err
 	}
 }
 
+func getFileContentsAsLines(files []string) ([]string, error) {
+	lines := make([]string, 0)
+	for _, filePath := range files {
+		ls, err := parseFile(filePath)
+		if err != nil {
+			return lines, err
+		}
+		lines = append(lines, ls...)
+	}
+	return lines, nil
+}
+
 func parseFile(filePath string) ([]string, error) {
 	lines := make([]string, 0)
+
 	file, err := os.Open(filePath)
 	if err != nil {
 		return lines, err
@@ -54,34 +61,31 @@ func parseFile(filePath string) ([]string, error) {
 	return lines, nil
 }
 
-func parseLines(lines []string, tests chan Test) error {
+func generateTestsFromLines(lines []string, tests chan Test) error {
 
 	testLines := make([][]string, 0)
-	testIdx := -1
-
+	idx := -1
 	for _, line := range lines {
-		if len(line) >= len(BlockTypeTest) && line[0:len(BlockTypeTest)] == BlockTypeTest {
-			testIdx += 1
+		if lineIsTestBlockHeader(line) {
+			idx += 1
 			testLines = append(testLines, make([]string, 0))
 		}
-		if testIdx >= 0 {
-			testLines[testIdx] = append(testLines[testIdx], line)
-		}
+		testLines[idx] = append(testLines[idx], line)
 	}
 
-	for _, lines := range testLines {
-		test, err := parseTestLines(lines)
+	for _, ls := range testLines {
+		test, err := generateTestFromLines(ls)
 		if err != nil {
 			return err
 		}
-
 		tests <- test
 	}
+
 	tests <- Test{Exit: true}
 	return nil
 }
 
-func parseTestLines(lines []string) (Test, error) {
+func generateTestFromLines(lines []string) (Test, error) {
 	test := Test{}
 
 	title, err := getTitle(lines)
@@ -115,14 +119,14 @@ func getScript(lines []string) (string, error) {
 	capture := false
 	for _, line := range lines {
 		if capture {
-			if len(line) >= len(BlockPrefix) && line[0:len(BlockPrefix)] == BlockPrefix {
+			if lineIsBlockHeader(line) {
 				return strings.Join(scriptLines, "\n"), nil
 			}
-			if len(line) >= 1 && line[0:1] == "\t" {
+			if lineIsBlockBody(line) {
 				scriptLines = append(scriptLines, line[1:])
 			}
 		}
-		if len(line) >= len(BlockTypeWhen) && line[0:len(BlockTypeWhen)] == BlockTypeWhen {
+		if lineIsWhenBlockHeader(line) {
 			capture = true
 		}
 	}
@@ -134,15 +138,14 @@ func getOutput(lines []string) (string, error) {
 	capture := false
 	for _, line := range lines {
 		if capture {
-
-			if len(line) >= len(BlockPrefix) && line[0:len(BlockPrefix)] == BlockPrefix {
+			if lineIsBlockHeader(line) {
 				return strings.Join(outputLines, "\n"), nil
 			}
-			if len(line) >= 1 && line[0:1] == "\t" {
+			if lineIsBlockBody(line) {
 				outputLines = append(outputLines, line[1:])
 			}
 		}
-		if len(line) >= len(BlockTypeThen) && line[0:len(BlockTypeThen)] == BlockTypeThen {
+		if lineIsThenBlockHeader(line) {
 			capture = true
 		}
 	}
@@ -150,4 +153,24 @@ func getOutput(lines []string) (string, error) {
 		return strings.Join(outputLines, "\n"), nil
 	}
 	return "", errors.New("Output Block Not Found")
+}
+
+func lineIsBlockHeader(line string) bool {
+	return len(line) >= len(BlockPrefix) && line[0:len(BlockPrefix)] == BlockPrefix
+}
+
+func lineIsBlockBody(line string) bool {
+	return len(line) >= 1 && line[0:1] == "\t"
+}
+
+func lineIsTestBlockHeader(line string) bool {
+	return len(line) >= len(BlockTypeTest) && line[0:len(BlockTypeTest)] == BlockTypeTest
+}
+
+func lineIsWhenBlockHeader(line string) bool {
+	return len(line) >= len(BlockTypeWhen) && line[0:len(BlockTypeWhen)] == BlockTypeWhen
+}
+
+func lineIsThenBlockHeader(line string) bool {
+	return len(line) >= len(BlockTypeThen) && line[0:len(BlockTypeThen)] == BlockTypeThen
 }
