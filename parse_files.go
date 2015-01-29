@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"strings"
 )
 
@@ -20,44 +19,22 @@ const (
 	BlockTypeThen = "#### then:"
 )
 
-type Test struct {
-	Title  string
-	Script string
-	Output string
-}
-
-type App struct {
-	Tests []Test
-}
-
-func (a *App) Parse(files []string) error {
+func ParseFiles(files []string, testConfigs chan Test, errors chan error) {
 	lines := make([]string, 0)
 
 	for _, filePath := range files {
-		l, err := parseFile(filePath)
+		ls, err := parseFile(filePath)
 		if err != nil {
-			return err
+			errors <- err
+			return
 		}
-		lines = append(lines, l...)
-
+		lines = append(lines, ls...)
 	}
 
-	tests, err := parseLines(lines)
-	if err == nil {
-		a.Tests = tests
+	err := parseLines(lines, testConfigs)
+	if err != nil {
+		errors <- err
 	}
-	return err
-}
-
-func (a *App) Run() error {
-	cmd := exec.Command("dig", "any", "google.com")
-	out, err := cmd.Output()
-
-	return nil
-}
-
-func (a *App) GetDisplay(verbose bool, asJson bool) (string, error) {
-	return "", nil
 }
 
 func parseFile(filePath string) ([]string, error) {
@@ -77,8 +54,7 @@ func parseFile(filePath string) ([]string, error) {
 	return lines, nil
 }
 
-func parseLines(lines []string) ([]Test, error) {
-	tests := make([]Test, 0)
+func parseLines(lines []string, tests chan Test) error {
 
 	testLines := make([][]string, 0)
 	testIdx := -1
@@ -94,14 +70,15 @@ func parseLines(lines []string) ([]Test, error) {
 	}
 
 	for _, lines := range testLines {
-		ts, err := parseTestLines(lines)
+		test, err := parseTestLines(lines)
 		if err != nil {
-			return tests, err
+			return err
 		}
-		tests = append(tests, ts)
-	}
 
-	return tests, nil
+		tests <- test
+	}
+	tests <- Test{Exit: true}
+	return nil
 }
 
 func parseTestLines(lines []string) (Test, error) {
@@ -121,7 +98,7 @@ func parseTestLines(lines []string) (Test, error) {
 	}
 	test.Title = title
 	test.Script = script
-	test.Output = output
+	test.ExpectedOutput = output
 	return test, nil
 }
 

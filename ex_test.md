@@ -5,6 +5,7 @@
 
 #### then:
 	Foo
+	
 
 ### test: echo -e should preserve special chars
 #### when:
@@ -14,3 +15,5 @@
 #### then:
 	Foo
 		Bar
+	
+
