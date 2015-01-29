@@ -19,7 +19,6 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	asJson := flag.Bool("json", false, "display output as json")
 	verbose := flag.Bool("v", true, "verbose")
 
 	flag.Parse()
@@ -35,15 +34,11 @@ func main() {
 	}
 
 	// run app
-	testConfigs := make(chan Test)
-	runTests := make(chan Test)
+	tests := make(chan Test)
 	errors := make(chan error)
 
-	go ParseFiles(files, testConfigs, errors)
-
-	go RunTests(testConfigs, runTests, errors)
-
-	go DisplayResults(runTests, errors, *verbose, *asJson)
+	go ParseFiles(files, tests, errors)
+	go RunTests(tests, errors, *verbose)
 
 	err := <-errors
 

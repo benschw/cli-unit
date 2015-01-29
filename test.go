@@ -18,3 +18,7 @@ func (t *Test) Diff() string {
 	diff := pretty.Diff(t.ExpectedOutput, t.FoundOutput)
 	return strings.Join(diff, "\n")
 }
+
+func (t *Test) Pass() bool {
+	return t.ExpectedOutput == t.FoundOutput
+}
