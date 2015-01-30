@@ -15,10 +15,14 @@ func RunTests(tests chan Test, errors chan error, verbose bool) {
 
 	for test := range tests {
 		if test.Exit {
+			sometimesPlural := "test"
+			if passed+failed > 1 {
+				sometimesPlural = "tests"
+			}
 			if failed == 0 {
-				fmt.Printf("Pass (%d/%d tests successful)\n", passed, passed+failed)
+				fmt.Printf("Pass (%d/%d %s successful)\n", passed, passed+failed, sometimesPlural)
 			} else {
-				fmt.Printf("Fail (%d/%d tests successful)\n", passed, passed+failed)
+				fmt.Printf("Fail (%d/%d %s successful)\n", passed, passed+failed, sometimesPlural)
 			}
 
 			errors <- nil

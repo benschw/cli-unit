@@ -59,6 +59,7 @@ func fileToLines(filePath string) ([]string, error) {
 func generateTestsFromLines(lines []string, tests chan Test) error {
 	var buffer []string
 	capture := false
+	lines = append(lines, BlockTypeGenericHeader)
 
 	for _, line := range lines {
 		if lineIsGenericHeader(line) || lineIsTestBlockHeader(line) {
@@ -69,13 +70,13 @@ func generateTestsFromLines(lines []string, tests chan Test) error {
 				}
 				tests <- test
 			}
-		}
-		if lineIsTestBlockHeader(line) {
-			capture = true
-			buffer = make([]string, 0)
-		}
-		if lineIsGenericHeader(line) {
-			capture = false
+			if lineIsGenericHeader(line) {
+				capture = false
+			}
+			if lineIsTestBlockHeader(line) {
+				capture = true
+				buffer = make([]string, 0)
+			}
 		}
 		if capture {
 			buffer = append(buffer, line)
@@ -139,6 +140,9 @@ func getBlock(lines []string, blockType string) ([]string, error) {
 				return buffer, nil
 			}
 			if lineIsBlockBody(line) {
+				if line[1:] == StrictFlag {
+					return buffer, nil
+				}
 				buffer = append(buffer, line[1:])
 			}
 		}

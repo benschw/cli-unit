@@ -27,7 +27,7 @@ unit test your command line interfaces
 
 #### then:
 
-	Pass (2/2 tests successful)
+	Pass (3/3 tests successful)
 
 ### test: -v should add result of each test to output
 #### when:
@@ -38,7 +38,8 @@ unit test your command line interfaces
 
 	--- OK: echo should work
 	--- OK: echo -e should preserve special chars
-	Pass (2/2 tests successful)
+	--- OK: "strict" flag enables testing trailing white space
+	Pass (3/3 tests successful)
 
 ### test: failed tests should show what the problem is
 #### when:
@@ -53,4 +54,4 @@ unit test your command line interfaces
 	"Food\n\tBar" != "Foo\n\tBar"
 	Fail (0/2 tests successful)
 
-	
+

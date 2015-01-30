@@ -12,16 +12,15 @@ I can say antyhing here
 
 ### test: echo -e should preserve special chars
 #### when:
-	echo -e "Foo\n\n\tBar"
+	echo -e "Foo\n\tBar"
 
 
 #### then:
 	Foo
-
 		Bar
 	
 
-### test: echo -e should preserve special chars
+### test: "strict" flag enables testing trailing white space
 #### when:
 	echo -e "Foo\n\n\tBar"
 
