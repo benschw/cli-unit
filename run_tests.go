@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"log"
-	"os/exec"
-	"strings"
 )
 
 var _ = log.Print
@@ -27,7 +24,7 @@ func RunTests(tests chan Test, errors chan error, verbose bool) {
 			errors <- nil
 			return
 		}
-		if err := runTest(&test); err != nil {
+		if err := test.Run(); err != nil {
 			errors <- err
 			return
 		}
@@ -47,20 +44,4 @@ func RunTests(tests chan Test, errors chan error, verbose bool) {
 			}
 		}
 	}
-}
-
-func runTest(test *Test) error {
-	bash := exec.Command("bash")
-	bash.Stdin = strings.NewReader(test.Script)
-
-	var out bytes.Buffer
-	bash.Stdout = &out
-
-	err := bash.Run()
-	if err != nil {
-		return err
-	}
-
-	test.FoundOutput = out.String()
-	return nil
 }

@@ -19,7 +19,7 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	verbose := flag.Bool("v", true, "verbose")
+	verbose := flag.Bool("v", false, "verbose")
 
 	flag.Parse()
 

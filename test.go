@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"github.com/kr/pretty"
+	"os/exec"
 	"strings"
 )
 
@@ -12,6 +14,22 @@ type Test struct {
 	ExpectedOutput string
 	Strict         bool
 	Exit           bool
+}
+
+func (t *Test) Run() error {
+	bash := exec.Command("bash")
+	bash.Stdin = strings.NewReader(t.Script)
+
+	var out bytes.Buffer
+	bash.Stdout = &out
+
+	err := bash.Run()
+	if err != nil {
+		return err
+	}
+
+	t.FoundOutput = out.String()
+	return nil
 }
 
 func (t *Test) Diff() string {

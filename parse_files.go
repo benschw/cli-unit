@@ -13,37 +13,31 @@ var _ = log.Print
 var _ = fmt.Print
 
 const (
-	BlockPrefix   = "###"
-	BlockTypeTest = "### test:"
-	BlockTypeWhen = "#### when:"
-	BlockTypeThen = "#### then:"
+	BlockTypeGenericHeader = "#"
+	BlockPrefix            = "###"
+	BlockTypeTest          = "### test:"
+	BlockTypeWhen          = "#### when:"
+	BlockTypeThen          = "#### then:"
 )
 
-func ParseFiles(files []string, testConfigs chan Test, errors chan error) {
+func ParseFiles(files []string, tests chan Test, errors chan error) {
 
-	lines, err := getFileContentsAsLines(files)
-	if err != nil {
-		errors <- err
-	}
+	for _, file := range files {
 
-	if err = generateTestsFromLines(lines, testConfigs); err != nil {
-		errors <- err
-	}
-}
-
-func getFileContentsAsLines(files []string) ([]string, error) {
-	lines := make([]string, 0)
-	for _, filePath := range files {
-		ls, err := parseFile(filePath)
+		lines, err := fileToLines(file)
 		if err != nil {
-			return lines, err
+			errors <- err
 		}
-		lines = append(lines, ls...)
+
+		if err = generateTestsFromLines(lines, tests); err != nil {
+			errors <- err
+		}
 	}
-	return lines, nil
+
+	tests <- Test{Exit: true}
 }
 
-func parseFile(filePath string) ([]string, error) {
+func fileToLines(filePath string) ([]string, error) {
 	lines := make([]string, 0)
 
 	file, err := os.Open(filePath)
@@ -62,30 +56,41 @@ func parseFile(filePath string) ([]string, error) {
 }
 
 func generateTestsFromLines(lines []string, tests chan Test) error {
+	var buffer []string
+	capture := false
 
-	testLines := make([][]string, 0)
-	idx := -1
 	for _, line := range lines {
 		if lineIsTestBlockHeader(line) {
-			idx += 1
-			testLines = append(testLines, make([]string, 0))
-		}
-		testLines[idx] = append(testLines[idx], line)
-	}
+			if capture {
+				test, err := getTest(buffer)
+				if err != nil {
+					return err
+				}
+				tests <- test
 
-	for _, ls := range testLines {
-		test, err := generateTestFromLines(ls)
-		if err != nil {
-			return err
+			}
+			capture = true
+			buffer = make([]string, 0)
 		}
-		tests <- test
-	}
+		if lineIsGenericHeader(line) {
+			capture = false
+		}
+		if capture {
+			buffer = append(buffer, line)
+		}
 
-	tests <- Test{Exit: true}
+	}
+	test, err := getTest(buffer)
+	if err != nil {
+		return err
+	}
+	tests <- test
+
 	return nil
+
 }
 
-func generateTestFromLines(lines []string) (Test, error) {
+func getTest(lines []string) (Test, error) {
 	test := Test{}
 
 	title, err := getTitle(lines)
@@ -173,4 +178,13 @@ func lineIsWhenBlockHeader(line string) bool {
 
 func lineIsThenBlockHeader(line string) bool {
 	return len(line) >= len(BlockTypeThen) && line[0:len(BlockTypeThen)] == BlockTypeThen
+}
+
+func lineIsGenericHeader(line string) bool {
+	if len(line) >= len(BlockTypeGenericHeader) && line[0:len(BlockTypeGenericHeader)] == BlockTypeGenericHeader {
+		if !lineIsTestBlockHeader(line) && !lineIsWhenBlockHeader(line) && !lineIsThenBlockHeader(line) {
+			return true
+		}
+	}
+	return false
 }
