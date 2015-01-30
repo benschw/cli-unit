@@ -18,6 +18,7 @@ const (
 	BlockTypeTest          = "### test:"
 	BlockTypeWhen          = "#### when:"
 	BlockTypeThen          = "#### then:"
+	StrictFlag             = "# strict"
 )
 
 func ParseFiles(files []string, tests chan Test, errors chan error) {
@@ -91,6 +92,7 @@ func getTest(lines []string) (Test, error) {
 	if err != nil {
 		return test, err
 	}
+	test.Title = title
 
 	whenBlock, err := getBlock(lines, BlockTypeWhen)
 	if err != nil {
@@ -104,7 +106,12 @@ func getTest(lines []string) (Test, error) {
 	}
 	test.ExpectedOutput = strings.Join(thenBlock, "\n")
 
-	test.Title = title
+	isStrict, err := isStrict(lines)
+	if err != nil {
+		return test, err
+	}
+
+	test.Strict = isStrict
 	return test, nil
 }
 
@@ -115,7 +122,14 @@ func getTitle(lines []string) (string, error) {
 	title := lines[0][len(BlockTypeTest):]
 	return strings.TrimSpace(title), nil
 }
-
+func isStrict(lines []string) (bool, error) {
+	thenBlock, err := getBlock(lines, BlockTypeThen)
+	if err != nil {
+		return false, err
+	}
+	trimmed := strings.Split(strings.TrimSpace(strings.Join(thenBlock, "\n")), "\n")
+	return trimmed[len(trimmed)-1] == StrictFlag, nil
+}
 func getBlock(lines []string, blockType string) ([]string, error) {
 	buffer := make([]string, 0)
 	capture := false
@@ -144,7 +158,6 @@ func lineIsBlockHeader(line string) bool {
 
 func lineIsBlockBody(line string) bool {
 	return lineIsHeader(line, "\t")
-	//	return len(line) >= 1 && line[0:1] == "\t"
 }
 
 func lineIsTestBlockHeader(line string) bool {
