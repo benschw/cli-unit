@@ -3,9 +3,12 @@ package main
 import (
 	"bytes"
 	"github.com/kr/pretty"
+	"log"
 	"os/exec"
 	"strings"
 )
+
+var _ = log.Print
 
 type Test struct {
 	Title          string

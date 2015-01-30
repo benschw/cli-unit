@@ -53,5 +53,3 @@ unit test your command line interfaces
 	--- FAIL: echo -e should preserve special chars
 	"Food\n\tBar" != "Foo\n\tBar"
 	Fail (0/2 tests successful)
-
-

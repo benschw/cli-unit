@@ -37,7 +37,7 @@ func main() {
 	tests := make(chan Test)
 	errors := make(chan error)
 
-	go ParseFiles(files, tests, errors)
+	go LoadTests(files, tests, errors)
 	go RunTests(tests, errors, *verbose)
 
 	err := <-errors

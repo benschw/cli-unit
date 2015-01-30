@@ -29,6 +29,7 @@ I can say antyhing here
 	Foo
 	
 		Bar
+	
 	# strict
 
 ## and start a new section over here
