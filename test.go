@@ -32,12 +32,26 @@ func (t *Test) Run() error {
 	return nil
 }
 
+func (t *Test) GetExpectedOutput() string {
+	if t.Strict {
+		return t.ExpectedOutput
+	} else {
+		return strings.TrimSpace(t.ExpectedOutput)
+	}
+}
+func (t *Test) GetFoundOutput() string {
+	if t.Strict {
+		return t.FoundOutput
+	} else {
+		return strings.TrimSpace(t.FoundOutput)
+	}
+}
+
 func (t *Test) Diff() string {
-	diff := pretty.Diff(t.ExpectedOutput, t.FoundOutput)
+	diff := pretty.Diff(t.GetExpectedOutput(), t.GetFoundOutput())
 	return strings.Join(diff, "\n")
 }
 
 func (t *Test) Pass() bool {
-
-	return strings.TrimSpace(t.ExpectedOutput) == strings.TrimSpace(t.FoundOutput)
+	return t.GetExpectedOutput() == t.GetFoundOutput()
 }

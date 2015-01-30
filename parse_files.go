@@ -22,9 +22,9 @@ const (
 
 func ParseFiles(files []string, tests chan Test, errors chan error) {
 
-	for _, file := range files {
+	for _, filePath := range files {
 
-		lines, err := fileToLines(file)
+		lines, err := fileToLines(filePath)
 		if err != nil {
 			errors <- err
 		}
@@ -60,15 +60,16 @@ func generateTestsFromLines(lines []string, tests chan Test) error {
 	capture := false
 
 	for _, line := range lines {
-		if lineIsTestBlockHeader(line) {
+		if lineIsGenericHeader(line) || lineIsTestBlockHeader(line) {
 			if capture {
 				test, err := getTest(buffer)
 				if err != nil {
 					return err
 				}
 				tests <- test
-
 			}
+		}
+		if lineIsTestBlockHeader(line) {
 			capture = true
 			buffer = make([]string, 0)
 		}
@@ -78,16 +79,9 @@ func generateTestsFromLines(lines []string, tests chan Test) error {
 		if capture {
 			buffer = append(buffer, line)
 		}
-
 	}
-	test, err := getTest(buffer)
-	if err != nil {
-		return err
-	}
-	tests <- test
 
 	return nil
-
 }
 
 func getTest(lines []string) (Test, error) {
@@ -97,17 +91,20 @@ func getTest(lines []string) (Test, error) {
 	if err != nil {
 		return test, err
 	}
-	script, err := getScript(lines)
+
+	whenBlock, err := getBlock(lines, BlockTypeWhen)
 	if err != nil {
 		return test, err
 	}
-	output, err := getOutput(lines)
+	test.Script = strings.Join(whenBlock, "\n")
+
+	thenBlock, err := getBlock(lines, BlockTypeThen)
 	if err != nil {
 		return test, err
 	}
+	test.ExpectedOutput = strings.Join(thenBlock, "\n")
+
 	test.Title = title
-	test.Script = script
-	test.ExpectedOutput = output
 	return test, nil
 }
 
@@ -119,69 +116,55 @@ func getTitle(lines []string) (string, error) {
 	return strings.TrimSpace(title), nil
 }
 
-func getScript(lines []string) (string, error) {
-	scriptLines := make([]string, 0)
+func getBlock(lines []string, blockType string) ([]string, error) {
+	buffer := make([]string, 0)
 	capture := false
 	for _, line := range lines {
 		if capture {
 			if lineIsBlockHeader(line) {
-				return strings.Join(scriptLines, "\n"), nil
+				return buffer, nil
 			}
 			if lineIsBlockBody(line) {
-				scriptLines = append(scriptLines, line[1:])
+				buffer = append(buffer, line[1:])
 			}
 		}
-		if lineIsWhenBlockHeader(line) {
+		if lineIsHeader(line, blockType) {
 			capture = true
 		}
 	}
-	return "", errors.New("Script Block Not Found")
-}
-
-func getOutput(lines []string) (string, error) {
-	outputLines := make([]string, 0)
-	capture := false
-	for _, line := range lines {
-		if capture {
-			if lineIsBlockHeader(line) {
-				return strings.Join(outputLines, "\n"), nil
-			}
-			if lineIsBlockBody(line) {
-				outputLines = append(outputLines, line[1:])
-			}
-		}
-		if lineIsThenBlockHeader(line) {
-			capture = true
-		}
+	if len(buffer) > 0 {
+		return buffer, nil
 	}
-	if len(outputLines) > 0 {
-		return strings.Join(outputLines, "\n"), nil
-	}
-	return "", errors.New("Output Block Not Found")
+	return buffer, errors.New("Bad format: expected block missing")
 }
 
 func lineIsBlockHeader(line string) bool {
-	return len(line) >= len(BlockPrefix) && line[0:len(BlockPrefix)] == BlockPrefix
+	return lineIsHeader(line, BlockPrefix)
 }
 
 func lineIsBlockBody(line string) bool {
-	return len(line) >= 1 && line[0:1] == "\t"
+	return lineIsHeader(line, "\t")
+	//	return len(line) >= 1 && line[0:1] == "\t"
 }
 
 func lineIsTestBlockHeader(line string) bool {
-	return len(line) >= len(BlockTypeTest) && line[0:len(BlockTypeTest)] == BlockTypeTest
+	return lineIsHeader(line, BlockTypeTest)
 }
 
 func lineIsWhenBlockHeader(line string) bool {
-	return len(line) >= len(BlockTypeWhen) && line[0:len(BlockTypeWhen)] == BlockTypeWhen
+	return lineIsHeader(line, BlockTypeWhen)
 }
 
 func lineIsThenBlockHeader(line string) bool {
-	return len(line) >= len(BlockTypeThen) && line[0:len(BlockTypeThen)] == BlockTypeThen
+	return lineIsHeader(line, BlockTypeThen)
+}
+
+func lineIsHeader(line string, headerType string) bool {
+	return len(line) >= len(headerType) && line[0:len(headerType)] == headerType
 }
 
 func lineIsGenericHeader(line string) bool {
-	if len(line) >= len(BlockTypeGenericHeader) && line[0:len(BlockTypeGenericHeader)] == BlockTypeGenericHeader {
+	if lineIsHeader(line, BlockTypeGenericHeader) {
 		if !lineIsTestBlockHeader(line) && !lineIsWhenBlockHeader(line) && !lineIsThenBlockHeader(line) {
 			return true
 		}

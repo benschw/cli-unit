@@ -48,7 +48,9 @@ unit test your command line interfaces
 #### then:
 
 	--- FAIL: echo should work
-	"Fool" != "Foo\n"
+	"Fool" != "Foo"
 	--- FAIL: echo -e should preserve special chars
-	"Food\n\tBar" != "Foo\n\tBar\n"
+	"Food\n\tBar" != "Foo\n\tBar"
 	Fail (0/2 tests successful)
+
+	

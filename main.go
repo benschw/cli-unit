@@ -15,7 +15,7 @@ func main() {
 	log.SetOutput(os.Stderr)
 
 	flag.Usage = func() {
-		fmt.Printf("Usage: cli-unit [options] test-file [test-file2...]\n\nOptions:\n")
+		fmt.Printf("Usage: cli-unit [options] test-file...\n\nOptions:\n")
 		flag.PrintDefaults()
 	}
 
@@ -43,9 +43,7 @@ func main() {
 	err := <-errors
 
 	if err != nil {
-		if *verbose {
-			log.Println(err)
-		}
+		log.Println(err)
 		os.Exit(1)
 	}
 }
