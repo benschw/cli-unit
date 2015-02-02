@@ -32,5 +32,15 @@ I can say antyhing here
 	
 	# strict
 
+### test: pipes should work too
+#### when:
+	echo -e "hello\nworld" | grep -v hello
+
+
+#### then:
+	world
+	
+
+
 ## and start a new section over here
 ha!

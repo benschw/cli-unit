@@ -14,6 +14,7 @@ type Test struct {
 	Title          string
 	Script         string
 	FoundOutput    string
+	FoundError     string
 	ExpectedOutput string
 	Strict         bool
 	Exit           bool
@@ -23,15 +24,17 @@ func (t *Test) Run() error {
 	bash := exec.Command("bash")
 	bash.Stdin = strings.NewReader(t.Script)
 
-	var out bytes.Buffer
-	bash.Stdout = &out
-
+	var stdOut bytes.Buffer
+	var stdErr bytes.Buffer
+	bash.Stdout = &stdOut
+	bash.Stderr = &stdErr
 	err := bash.Run()
 	if err != nil {
 		return err
 	}
 
-	t.FoundOutput = out.String()
+	t.FoundOutput = stdOut.String()
+	t.FoundError = stdErr.String()
 	return nil
 }
 

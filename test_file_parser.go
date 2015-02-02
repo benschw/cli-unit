@@ -122,6 +122,7 @@ func getBlock(lines []string, blockType string) ([]string, bool, error) {
 				if line[1:] == StrictFlag {
 					return buffer, true, nil
 				}
+
 				buffer = append(buffer, line[1:])
 			} else {
 				return buffer, false, nil
