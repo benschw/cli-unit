@@ -1,3 +1,4 @@
+[![Build Status](https://drone.io/github.com/benschw/cli-unit/status.png)](https://drone.io/github.com/benschw/cli-unit/latest)
 
 ## cli-unit
 
