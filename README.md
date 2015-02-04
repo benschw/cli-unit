@@ -104,7 +104,7 @@ tabbed lines are compared
 	echo -e "foo\nbar\n"
 
 #### then:
-strict mode is hard to set up right if you're using some editers like sublime text which will do a bunch of auto trimming.
+strict mode is hard to set up right if you're using some editors like sublime text which will do a bunch of auto trimming.
 
 
 	foo
