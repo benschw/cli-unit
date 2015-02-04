@@ -23,13 +23,13 @@ gzip: deps golang-crosscompile golang-buildsetup
 	source golang-crosscompile/crosscompile.bash; \
 	mkdir -p build/output; \
 	go-darwin-386 build -o cli-unit; \
-	gzip -c cli-unit > build/output/jsonfilter-Darwin-386.gz; \
-	go-darwin-amd64 build -o jsonfilter; \
-	gzip -c cli-unit > build/output/jsonfilter-Darwin-x86_64.gz; \
-	go-linux-386 build -o jsonfilter; \
-	gzip -c cli-unit > build/output/jsonfilter-Linux-386.gz; \
-	go-linux-amd64 build -o jsonfilter; \
-	gzip -c cli-unit > build/output/jsonfilter-Linux-x86_64.gz
+	gzip -c cli-unit > build/output/cli-unit-Darwin-386.gz; \
+	go-darwin-amd64 build -o cli-unit; \
+	gzip -c cli-unit > build/output/cli-unit-Darwin-x86_64.gz; \
+	go-linux-386 build -o cli-unit; \
+	gzip -c cli-unit > build/output/cli-unit-Linux-386.gz; \
+	go-linux-amd64 build -o cli-unit; \
+	gzip -c cli-unit > build/output/cli-unit-Linux-x86_64.gz
 
 golang-buildsetup: golang-crosscompile
 	source golang-crosscompile/crosscompile.bash; \
