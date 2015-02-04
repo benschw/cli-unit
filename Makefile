@@ -7,7 +7,7 @@ deps:
 
 test:
 	go test -v
-	./cli-unitw.sh -v README.md *_test.md
+	./cli-unit -v README.md *_test.md
 
 build:
 	go build
