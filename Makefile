@@ -5,7 +5,7 @@ all: build
 deps:
 	go get -t -v ./...
 
-test:
+test: build
 	go test -v
 	./cli-unit -v README.md *_test.md
 
