@@ -19,12 +19,12 @@ const (
 	StrictFlag             = "(strict)"
 )
 
-type TestFileParser struct {
+type FileParser struct {
 	lines []string
 	idx   int
 }
 
-func NewTestFileParser(filePath string) (*TestFileParser, error) {
+func NewFileParser(filePath string) (*FileParser, error) {
 	lines := make([]string, 0)
 
 	file, err := os.Open(filePath)
@@ -39,13 +39,13 @@ func NewTestFileParser(filePath string) (*TestFileParser, error) {
 		lines = append(lines, scanner.Text())
 	}
 
-	return &TestFileParser{
+	return &FileParser{
 		lines: lines,
 		idx:   0,
 	}, nil
 }
 
-func (t *TestFileParser) NextTest() (*Test, error) {
+func (t *FileParser) NextTest() (*Test, error) {
 
 	lines := append(t.lines, BlockTypeGenericHeader)
 	buffer := make([]string, 0)

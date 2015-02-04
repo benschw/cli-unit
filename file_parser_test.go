@@ -6,10 +6,10 @@ import (
 	"testing"
 )
 
-func NewStubFileParser(content string) *TestFileParser {
+func NewStubFileParser(content string) *FileParser {
 	lines := strings.Split(content, "\n")
 
-	return &TestFileParser{
+	return &FileParser{
 		lines: lines,
 		idx:   0,
 	}
@@ -77,6 +77,8 @@ hey!
 asd
 	junk
 sup
+
+## Another Section
 
 ### test: echo should work
 #### when:

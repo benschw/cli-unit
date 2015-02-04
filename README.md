@@ -19,7 +19,7 @@ unit test your command line interfaces
 - `#### then:` starts the block where you define the expected output
 
 
-## suite: Example
+## Examples
 
 ### test: Vanilla test run
 #### when:
@@ -56,3 +56,49 @@ unit test your command line interfaces
 	--- FAIL: failed when clauses should cause an error
 	exit status 2: ls: cannot access not_a_file: No such file or directory
 	Fail (0/2 tests successful)
+
+## Formatting Examples
+
+### test: check some output
+You can put whatever you want here
+#### when:
+
+	echo -e "foo"
+
+#### then:
+
+	foo
+
+
+### test: check some more output
+when not using `(strict)`, empty lines count as part of your `when` and `then` blocks
+and trailing whitespace characters aren't compared
+
+#### when:
+
+	echo -e "foo\n\n\nbar\n\n"
+
+#### then:
+
+	foo
+
+
+	bar
+
+### test: (strict) check some strict output
+when using `(strict)`, empty lines terminate your `when` and `then` blocksand trailing
+tabbed lines are compared
+
+#### when:
+
+	echo -e "foo\nbar\n"
+
+#### then:
+
+	foo
+	bar
+	
+	
+
+
+	this is not part of the test
