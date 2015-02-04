@@ -44,7 +44,7 @@ func RunTests(tests chan Test, errors chan error, verbose bool) {
 			if testOk {
 				fmt.Printf("--- OK: %s\n", test.Title)
 			} else {
-				fmt.Printf("--- FAIL: %s\n%s\n", test.Title, test.Diff())
+				fmt.Printf("--- FAIL: %s\n%s\n", test.Title, test.GetFailMessage())
 			}
 		}
 	}

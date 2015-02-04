@@ -1,16 +1,13 @@
-### test: echo should work
+### test: this isn't right
 #### when:
 	echo "Foo"
-
 
 #### then:
 	Fool
 
-### test: echo -e should preserve special chars
+### test: failed when clauses should cause an error
 #### when:
-	echo -e "Foo\n\tBar"
-
+	ls not_a_file
 
 #### then:
-	Food
-		Bar
+	nothing here matters because the command won't work

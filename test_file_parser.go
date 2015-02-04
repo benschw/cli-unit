@@ -16,7 +16,7 @@ const (
 	BlockTypeTest          = "### test:"
 	BlockTypeWhen          = "#### when:"
 	BlockTypeThen          = "#### then:"
-	StrictFlag             = "# strict"
+	StrictFlag             = "(strict)"
 )
 
 type TestFileParser struct {
@@ -56,7 +56,7 @@ func (t *TestFileParser) NextTest() (*Test, error) {
 	for i := t.idx; i < len(lines) && complete == false; i++ {
 		line := lines[i]
 
-		if (lineIsTestBlockHeader(line) || lineIsGenericHeader(line)) && capture {
+		if capture && (lineIsTestBlockHeader(line) || lineIsGenericHeader(line)) {
 			complete = true
 
 			test, err := parseTest(buffer)
@@ -89,50 +89,74 @@ func parseTest(lines []string) (Test, error) {
 	}
 	test.Title = title
 
-	whenBlock, _, err := getBlock(lines, BlockTypeWhen)
+	strict, err := isStrict(lines[0])
+	if err != nil {
+		return test, err
+	}
+	test.Strict = strict
+
+	whenBlock, err := getBlock(lines, BlockTypeWhen, false)
 	if err != nil {
 		return test, err
 	}
 	test.Script = strings.Join(whenBlock, "\n")
 
-	thenBlock, isStrict, err := getBlock(lines, BlockTypeThen)
+	thenBlock, err := getBlock(lines, BlockTypeThen, test.Strict)
 	if err != nil {
 		return test, err
 	}
 	test.ExpectedOutput = strings.Join(thenBlock, "\n")
 
-	test.Strict = isStrict
 	return test, nil
 }
 
 func getTitle(lines []string) (string, error) {
-	if len(lines[0]) < len(BlockTypeTest) {
+	if !lineIsTestBlockHeader(lines[0]) {
 		return "", errors.New("Test Block Invalid")
 	}
 	title := lines[0][len(BlockTypeTest):]
 	return strings.TrimSpace(title), nil
 }
-func getBlock(lines []string, blockType string) ([]string, bool, error) {
+
+func isStrict(line string) (bool, error) {
+	if !lineIsTestBlockHeader(line) {
+		return false, errors.New("Test Block Invalid")
+	}
+	start := len(BlockTypeTest) + 1
+	stop := len(BlockTypeTest) + 1 + len(StrictFlag)
+	return line[start:stop] == StrictFlag, nil
+}
+
+// get the first set of \t prefixed lines within the specified block type
+func getBlock(lines []string, blockType string, strict bool) ([]string, error) {
 	buffer := make([]string, 0)
+	inBlock := false
 	capture := false
 	lines = append(lines, BlockPrefix)
 	for _, line := range lines {
-		if capture {
-			if lineIsBlockBody(line) {
-				if line[1:] == StrictFlag {
-					return buffer, true, nil
-				}
-
-				buffer = append(buffer, line[1:])
-			} else {
-				return buffer, false, nil
+		if !inBlock {
+			if lineIsHeader(line, blockType) {
+				inBlock = true
 			}
-		}
-		if lineIsHeader(line, blockType) {
-			capture = true
+		} else {
+			if lineIsBlockBody(line) {
+				capture = true
+			}
+			if capture {
+				if lineIsBlockBody(line) || (!strict && line == "") {
+					cleanLine := line
+					if len(line) > 0 {
+						cleanLine = line[1:]
+					}
+					buffer = append(buffer, cleanLine)
+				} else {
+					return buffer, nil
+				}
+			}
+
 		}
 	}
-	return buffer, false, errors.New("Bad format: expected block missing")
+	return buffer, errors.New("Bad format: expected block missing")
 }
 
 // func lineIsBlockHeader(line string) bool {

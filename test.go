@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/kr/pretty"
 	"log"
 	"os/exec"
@@ -15,6 +16,7 @@ type Test struct {
 	Script         string
 	FoundOutput    string
 	FoundError     string
+	Err            error
 	ExpectedOutput string
 	Strict         bool
 	Exit           bool
@@ -28,10 +30,7 @@ func (t *Test) Run() error {
 	var stdErr bytes.Buffer
 	bash.Stdout = &stdOut
 	bash.Stderr = &stdErr
-	err := bash.Run()
-	if err != nil {
-		return err
-	}
+	t.Err = bash.Run()
 
 	t.FoundOutput = stdOut.String()
 	t.FoundError = stdErr.String()
@@ -52,6 +51,17 @@ func (t *Test) GetFoundOutput() string {
 		return strings.TrimSpace(t.FoundOutput)
 	}
 }
+func (t *Test) GetFoundError() string {
+	return strings.TrimSpace(t.FoundError)
+}
+
+func (t *Test) GetFailMessage() string {
+	if t.Err != nil {
+		return fmt.Sprintf("%s: %s", t.Err, t.GetFoundError())
+	} else {
+		return t.Diff()
+	}
+}
 
 func (t *Test) Diff() string {
 	diff := pretty.Diff(t.GetExpectedOutput(), t.GetFoundOutput())
@@ -59,5 +69,5 @@ func (t *Test) Diff() string {
 }
 
 func (t *Test) Pass() bool {
-	return t.GetExpectedOutput() == t.GetFoundOutput()
+	return t.Err == nil && (t.GetExpectedOutput() == t.GetFoundOutput())
 }

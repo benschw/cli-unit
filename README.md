@@ -20,16 +20,16 @@ unit test your command line interfaces
 
 ## suite: Example
 
-### test: sucessful tests should "Pass"
+### test: Vanilla test run
 #### when:
 
 	./cli-unit ./ex_test.md 
 
 #### then:
 
-	Pass (3/3 tests successful)
+	Pass (4/4 tests successful)
 
-### test: -v should add result of each test to output
+### test: Optionally get verbose output
 #### when:
 
 	./cli-unit -v ./ex_test.md 
@@ -38,18 +38,20 @@ unit test your command line interfaces
 
 	--- OK: echo should work
 	--- OK: echo -e should preserve special chars
-	--- OK: "strict" flag enables testing trailing white space
-	Pass (3/3 tests successful)
+	--- OK: (strict) strict flag enables testing trailing white space
+	--- OK: pipes should work too
+	Pass (4/4 tests successful)
 
-### test: failed tests should show what the problem is
+### test: failed tests should show what the problem is (also handle expected error)
 #### when:
 
-	./cli-unit failures_ex.md 
+	./cli-unit failures_ex.md || true
+
 
 #### then:
 
-	--- FAIL: echo should work
+	--- FAIL: this isn't right
 	"Fool" != "Foo"
-	--- FAIL: echo -e should preserve special chars
-	"Food\n\tBar" != "Foo\n\tBar"
+	--- FAIL: failed when clauses should cause an error
+	exit status 2: ls: cannot access not_a_file: No such file or directory
 	Fail (0/2 tests successful)

@@ -20,17 +20,18 @@ I can say antyhing here
 		Bar
 	
 
-### test: "strict" flag enables testing trailing white space
+### test: (strict) strict flag enables testing trailing white space
 #### when:
 	echo -e "Foo\n\n\tBar"
 
 
-#### then:
+#### then: 
 	Foo
 	
 		Bar
 	
-	# strict
+
+
 
 ### test: pipes should work too
 #### when:
