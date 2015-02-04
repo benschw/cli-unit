@@ -59,16 +59,25 @@ unit test your command line interfaces
 
 ## Formatting Examples
 
+you can have multiple blocks of tests in your markdown files (we didn't have to jump directly from "Examples" to "Formatting Examples")
+
 ### test: check some output
 You can put whatever you want here
 #### when:
+or here
 
 	echo -e "foo"
 
+- and not
+- just text
+
 #### then:
+
+or here
 
 	foo
 
+or here...
 
 ### test: check some more output
 when not using `(strict)`, empty lines count as part of your `when` and `then` blocks
@@ -85,6 +94,7 @@ and trailing whitespace characters aren't compared
 
 	bar
 
+
 ### test: (strict) check some strict output
 when using `(strict)`, empty lines terminate your `when` and `then` blocksand trailing
 tabbed lines are compared
@@ -94,11 +104,14 @@ tabbed lines are compared
 	echo -e "foo\nbar\n"
 
 #### then:
+strict mode is hard to set up right if you're using some editers like sublime text which will do a bunch of auto trimming.
+
 
 	foo
 	bar
 	
 	
+
 
 
 	this is not part of the test
