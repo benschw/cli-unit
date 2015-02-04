@@ -11,6 +11,7 @@ var _ = fmt.Print
 func LoadTests(files []string, tests chan Test, errors chan error) {
 
 	for _, filePath := range files {
+
 		parser, err := NewTestFileParser(filePath)
 		if err != nil {
 			errors <- err
