@@ -6,7 +6,7 @@ deps:
 	go get -t -v ./...
 
 test:
-	go test
+	go test -v
 	./cli-unitw.sh -v README.md *_test.md
 
 build:
@@ -15,6 +15,7 @@ build:
 
 clean:
 	rm -rf ./cli-unit
+	rm -rf ./build
 
 packages: build gzip
 
