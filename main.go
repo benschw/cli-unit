@@ -19,7 +19,7 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	verbose := flag.Bool("v", false, "verbose")
+	verbose := flag.Bool("v", false, "(verbose) show all tests, whether or not they pass")
 
 	flag.Parse()
 

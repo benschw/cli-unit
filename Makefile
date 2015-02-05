@@ -16,6 +16,7 @@ build:
 clean:
 	rm -rf ./cli-unit
 	rm -rf ./build
+	rm -rf ./.cli-unit
 
 packages: build gzip
 
