@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CLI-Unit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <!-- Bootstrap core CSS -->
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+ 
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.js"></script>
+      <script src="http://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+  <a href="https://github.com/benschw/cli-unit"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>cli-unit</h1>
+        <p>
+          a test runner for your command line interfaces that runs off of "example usage" friendly markdown
+        </p>
+
+
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Release</div>
+        <div class="panel-body">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <a class="btn btn-success" role="button" href="https://github.com/benschw/cli-unit/releases/tag/0.1.0">cli-unit 0.1.0 release</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">Getting Started</div>
+        <div class="panel-body">
+          <p>Binaries are available for x86 and amd64 flavors of Darwin and Linux</p>
+          <pre>
+    wget -qO- https://github.com/benschw/jsonfilter/releases/download/0.1.0/cli-unit-`uname`-`uname -m`-0.1.0.gz | \
+      gunzip > /usr/local/bin/cli-unit
+    chmod +x /usr/local/bin/cli-unit
+          </pre>
+
+          <p>Or add cli-unitw.sh to your project and fetch the binary when you need it (so that anyone who checks out your repo can run the tests without installing dependencies)</p>
+          <pre>
+
+    wget https://github.com/benschw/jsonfilter/releases/download/0.1.0/cli-unitw.sh
+    chmod +x ./cli-unitw.sh
+          </pre>
+
+          <p>Add a test to your README.md</p>
+          <pre>    
+## Figlet, ascii art for the masses
+etc. etc. etc...
+
+## Examples
+### test: figlet should be able to make ascii art out of text
+#### when:
+  figlet "cli-unit"
+
+#### then:
+        _ _                   _ _   
+    ___| (_)      _   _ _ __ (_) |_ 
+   / __| | |_____| | | | '_ \| | __|
+  | (__| | |_____| |_| | | | | | |_ 
+   \___|_|_|      \__,_|_| |_|_|\__|
+
+
+### test: "-f script" should make output cursive
+#### when:
+  figlet -f script "cli-unit"
+
+#### then:
+        _                             
+       | | o                    o     
+   __  | |               _  _     _|_ 
+  /    |/  |-----|   |  / |/ |  |  |  
+  \___/|__/|_/    \_/|_/  |  |_/|_/|_/
+                                      
+          </pre>
+          <p>
+            Check that your example works (the "then" block matches the output from running the "when" block):
+          </p>
+          <pre>
+  ./cli-unitw.sh README.md
+  Pass (2/2 tests successful)
+          </pre>
+
+          <p>
+            And point people to your beautiful project page, complete with examples you know will stay up to date:
+          </p>
+        </div>
+      </div>
+
+<h2>Figlet, ascii art for the masses</h2>
+<p>etc. etc. etc...</p>
+
+<h2> Examples</h2>
+<h3>test: figlet should be able to make ascii art out of text</h3>
+<h4>when:</h4>
+<pre>
+  figlet "cli-unit"
+</pre>
+<h4>then:</h4>
+<pre>
+        _ _                   _ _   
+    ___| (_)      _   _ _ __ (_) |_ 
+   / __| | |_____| | | | '_ \| | __|
+  | (__| | |_____| |_| | | | | | |_ 
+   \___|_|_|      \__,_|_| |_|_|\__|
+</pre>
+<h3>test: "-f script" should make output cursive</h3>
+<h4>when:</h4>
+<pre>
+ figlet -f script "cli-unit"
+</pre>
+<h4>then:</h4>
+<pre>
+        _                             
+       | | o                    o     
+   __  | |               _  _     _|_ 
+  /    |/  |-----|   |  / |/ |  |  |  
+  \___/|__/|_/    \_/|_/  |  |_/|_/|_/
+                                      
+</pre>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <p>
+            <em>More examples on the <a href="https://github.com/benschw/cli-unit">github project page</a></em>
+          </p>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  </body>
+</html>
