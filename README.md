@@ -2,7 +2,9 @@
 
 ## cli-unit
 
-unit test your command line interfaces
+unit test your command line interfaces and use your tests as usage documentation
+
+* [Download](http://txt.fliglio.com/cli-unit/)
 
 
 ## Install
