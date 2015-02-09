@@ -4,10 +4,12 @@
 
 unit test your command line interfaces and use your tests as usage documentation
 
-* [Download](http://txt.fliglio.com/cli-unit/)
+* [Latest Release](http://txt.fliglio.com/cli-unit/)
 
 
 ## Install
+
+(install latest successful build from drone.io)
 
 - add `cli-unitw.sh` to your project
 - add `.fli-unit` to your `.gitignore` file
