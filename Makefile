@@ -4,7 +4,7 @@ all: build
 
 
 test: build
-	go test -v
+	go test $(go list ./... | grep -v '/vendor/')
 	./cli-unit -v README.md *_test.md
 
 build:
