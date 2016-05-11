@@ -2,8 +2,6 @@ SHELL=/bin/bash
 
 all: build
 
-deps:
-	go get -t -v ./...
 
 test: build
 	go test -v
