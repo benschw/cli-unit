@@ -1,9 +1,7 @@
-[![Build Status](https://travis-ci.org/benschw/cli-unit.svg?branch=master)](https://travis-ci.org/benschw/chinchilla)
-[![Download Latest](https://img.shields.io/badge/download-latest-blue.svg)](http://dl.fligl.io/artifacts/cli-unit/chinchilla_linux_amd64_latest.gz)
+[![Build Status](https://travis-ci.org/benschw/cli-unit.svg?branch=master)](https://travis-ci.org/benschw/cli-unit)
+[![Download Latest](https://img.shields.io/badge/download-latest_linux_amd64-blue.svg)](http://dl.fligl.io/artifacts/cli-unit/cli-unit_linux_amd64_latest.gz)
 [![Releases](https://img.shields.io/badge/download-release-blue.svg)](http://dl.fligl.io/#/cli-unit)
 
-
-[![Build Status](https://drone.io/github.com/benschw/cli-unit/status.png)](https://drone.io/github.com/benschw/cli-unit/latest)
 
 ## cli-unit
 
