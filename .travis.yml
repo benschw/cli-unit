@@ -15,23 +15,23 @@ before_install:
 script:
   - go vet $(go list ./... | grep -v vendor)
   - go test $(go list ./... | grep -v '/vendor/')
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "chinchilla_{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "chinchilla_{{.OS}}_{{.Arch}}" -osarch="linux/386"
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "chinchilla_{{.OS}}_{{.Arch}}" -osarch="darwin/amd64"
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "chinchilla_{{.OS}}_{{.Arch}}" -osarch="darwin/386"
-  - gzip chinchilla_linux_amd64
-  - gzip chinchilla_linux_386
-  - gzip chinchilla_darwin_amd64
-  - gzip chinchilla_darwin_386
+  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
+  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="linux/386"
+  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="darwin/amd64"
+  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="darwin/386"
+  - gzip cli-unit_linux_amd64
+  - gzip cli-unit_linux_386
+  - gzip cli-unit_darwin_amd64
+  - gzip cli-unit_darwin_386
   - mkdir -p dist release
-  - cp chinchilla_linux_amd64.gz dist/chinchilla_linux_amd64_latest.gz
-  - cp chinchilla_linux_386.gz dist/chinchilla_linux_386_latest.gz
-  - cp chinchilla_darwin_amd64.gz dist/chinchilla_darwin_amd64_latest.gz
-  - cp chinchilla_darwin_386.gz dist/chinchilla_darwin_386_latest.gz
-  - cp chinchilla_linux_amd64.gz release/chinchilla_linux_amd64_$(git describe --tags).gz
-  - cp chinchilla_linux_386.amd64.gz release/chinchilla_linux_386_$(git describe --tags).gz
-  - cp chinchilla_darwin_amd64.gz release/chinchilla_darwin_amd64_$(git describe --tags).gz
-  - cp chinchilla_darwin_386.gz release/chinchilla_darwin_386_$(git describe --tags).gz
+  - cp cli-unit_linux_amd64.gz dist/cli-unit_linux_amd64_latest.gz
+  - cp cli-unit_linux_386.gz dist/cli-unit_linux_386_latest.gz
+  - cp cli-unit_darwin_amd64.gz dist/cli-unit_darwin_amd64_latest.gz
+  - cp cli-unit_darwin_386.gz dist/cli-unit_darwin_386_latest.gz
+  - cp cli-unit_linux_amd64.gz release/cli-unit_linux_amd64_$(git describe --tags).gz
+  - cp cli-unit_linux_386.gz release/cli-unit_linux_386_$(git describe --tags).gz
+  - cp cli-unit_darwin_amd64.gz release/cli-unit_darwin_amd64_$(git describe --tags).gz
+  - cp cli-unit_darwin_386.gz release/cli-unit_darwin_386_$(git describe --tags).gz
 
 deploy:
   - provider: s3
