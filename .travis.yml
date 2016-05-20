@@ -15,23 +15,11 @@ before_install:
 script:
   - go vet $(go list ./... | grep -v vendor)
   - go test $(go list ./... | grep -v '/vendor/')
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="linux/386"
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="darwin/amd64"
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="darwin/386"
-  - gzip cli-unit_linux_amd64
-  - gzip cli-unit_linux_386
-  - gzip cli-unit_darwin_amd64
-  - gzip cli-unit_darwin_386
+  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "cli-unit_{{.OS}}_{{.Arch}}" -osarch="linux/amd64 linux/386 darwin/amd64 darwin/386"
+  - gzip cli-unit_*
   - mkdir -p dist release
-  - cp cli-unit_linux_amd64.gz dist/cli-unit_linux_amd64_latest.gz
-  - cp cli-unit_linux_386.gz dist/cli-unit_linux_386_latest.gz
-  - cp cli-unit_darwin_amd64.gz dist/cli-unit_darwin_amd64_latest.gz
-  - cp cli-unit_darwin_386.gz dist/cli-unit_darwin_386_latest.gz
-  - cp cli-unit_linux_amd64.gz release/cli-unit_linux_amd64_$(git describe --tags).gz
-  - cp cli-unit_linux_386.gz release/cli-unit_linux_386_$(git describe --tags).gz
-  - cp cli-unit_darwin_amd64.gz release/cli-unit_darwin_amd64_$(git describe --tags).gz
-  - cp cli-unit_darwin_386.gz release/cli-unit_darwin_386_$(git describe --tags).gz
+  - for f in cli-unit_*.gz; do cp $f dist/"${f%.gz}_latest.gz"; done
+  - for f in cli-unit_*.gz; do cp $f release/"${f%.gz}_$(git describe --tags).gz"; done
 
 deploy:
   - provider: s3
